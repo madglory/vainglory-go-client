@@ -23,6 +23,19 @@ func TestGetMatches(t *testing.T) {
 	}
 }
 
+func TestGetMatch(t *testing.T) {
+	client := NewClient()
+
+	match, err := client.GetMatch("f78917d2-d7cf-11e6-ad79-062445d3d668")
+	if err != nil {
+		t.Fatalf("There was an error getting your match %v", err)
+	}
+
+	if match.ID != "f78917d2-d7cf-11e6-ad79-062445d3d668" {
+		t.Fatalf("Got the wrong match")
+	}
+}
+
 func TestGetPlayer(t *testing.T) {
 	client := NewClient()
 

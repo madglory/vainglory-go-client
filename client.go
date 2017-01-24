@@ -63,8 +63,35 @@ func (c *client) GetMatches() error {
 		return err
 	}
 
-	//fmt.Printf("Get matches: %s", res.String())
+	//	fmt.Printf("Get matches: %s", res.String())
 	return err
+}
+
+func (c *client) GetMatch(matchID string) (*Match, error) {
+	req := c.g.Request()
+	req.Path("/shards/na/matches/" + matchID)
+	req.Method("GET")
+
+	res, err := req.Send()
+	if err != nil {
+		return nil, err
+	}
+
+	if !res.Ok {
+		fmt.Printf("Invalid server response: %d\n", res.StatusCode)
+		return nil, err
+	}
+
+	//create an empty player object
+	match := new(Match)
+
+	//fill the player object with the response data
+	if err = jsonapi.UnmarshalPayload(res.RawResponse.Body, match); err != nil {
+		fmt.Printf("Error %s", err)
+		return nil, err
+	}
+	fmt.Print(prettyMatch(match))
+	return match, err
 }
 
 func (c *client) GetPlayer(playerID string) (*Player, error) {
