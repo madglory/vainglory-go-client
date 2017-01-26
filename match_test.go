@@ -2,19 +2,9 @@ package vainglory
 
 import "fmt"
 
-func prettyMatch(match *Match) string {
+func PrettyMatch(match *Match) string {
 
-	//	fmt.Printf("Rosters: %s", match.Rosters)
-
-	r := match.Rosters
-	fmt.Printf("Rosters: \n")
-	for w := range r {
-		//fmt.Printf("Participant stats: %v", r[w].Participants[0].Stats)
-		fmt.Printf("%v : %v\n", w, r[w])
-	}
-
-	//fmt.Printf("Participant stats: %v", r[0].Participants[0].Stats)
-	//	x := match.Rosters[0].Participants[0].Stats
+	fmt.Println("Participants data")
 	x := 0
 	y := 0
 	for x < 2 {
@@ -26,8 +16,15 @@ func prettyMatch(match *Match) string {
 		y = 0
 	}
 
-	s := match.Stats
+	//Prints out the match rosters information
+	r := match.Rosters
+	fmt.Printf("Rosters: \n")
+	for w := range r {
+		fmt.Printf("%v : %v\n", w, r[w])
+	}
 
+	//prints out the rest of mactch stats
+	s := match.Stats
 	for k := range s {
 		fmt.Printf("%v : %v\n", k, s[k])
 	}

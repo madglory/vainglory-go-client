@@ -2,31 +2,57 @@ package vainglory
 
 import "testing"
 
+var apikey = "aaa.bbb.ccc"
+var offset = "0"
+var limit = "3"
+
 func TestGetStatus(t *testing.T) {
 
-	client := NewClient()
+	q := new(QueryRequest)
+	client := NewClient(apikey, q)
 
-	err := client.GetStatus()
+	status, serverResponse, err := client.GetStatus()
 
 	if err != nil {
-		t.Fatalf("There was an error getting status: %v", err)
+		t.Fatalf("There was an error getting status: %v\n", err)
+	}
+
+	if serverResponse != 0 {
+		t.Fatalf("Invalid server response: %v\n", serverResponse)
+	}
+	if status == "" {
+		t.Fatalf("No status was retrieved.")
 	}
 }
 
 func TestGetMatches(t *testing.T) {
 
-	client := NewClient()
-	err := client.GetMatches()
+	q := new(QueryRequest)
+	q.Limit = "3"
+	q.Offset = "0"
+
+	client := NewClient(apikey, q)
+
+	matches, serverResponse, err := client.GetMatches()
 
 	if err != nil {
 		t.Fatalf("There was an error getting matches: %v", err)
 	}
+	if serverResponse != 0 {
+		t.Fatalf("Invalid server response: %v\n", serverResponse)
+	}
+	if matches == "" {
+		t.Fatalf("There are no matches with these parameters")
+	}
+	//	fmt.Printf("match: %v", match)
 }
 
-func TestGetMatch(t *testing.T) {
-	client := NewClient()
+func TestGetMatchByID(t *testing.T) {
 
-	match, err := client.GetMatch("f78917d2-d7cf-11e6-ad79-062445d3d668")
+	q := new(QueryRequest)
+	client := NewClient(apikey, q)
+
+	match, serverResponse, err := client.GetMatchByID("f78917d2-d7cf-11e6-ad79-062445d3d668")
 	if err != nil {
 		t.Fatalf("There was an error getting your match %v", err)
 	}
@@ -34,12 +60,19 @@ func TestGetMatch(t *testing.T) {
 	if match.ID != "f78917d2-d7cf-11e6-ad79-062445d3d668" {
 		t.Fatalf("Got the wrong match")
 	}
+
+	if serverResponse != 0 {
+		t.Fatalf("Invalid server response: %v\n", serverResponse)
+	}
+	//PrettyMatch(match)
 }
 
-func TestGetPlayer(t *testing.T) {
-	client := NewClient()
+func TestGetPlayerByID(t *testing.T) {
 
-	player, err := client.GetPlayer("3a8f6440-1b20-11e6-a24a-06ab1a16f8e5")
+	q := new(QueryRequest)
+	client := NewClient(apikey, q)
+
+	player, serverResponse, err := client.GetPlayerByID("3a8f6440-1b20-11e6-a24a-06ab1a16f8e5")
 	if err != nil {
 		t.Fatalf("There was an error getting your player %v", err)
 	}
@@ -47,4 +80,10 @@ func TestGetPlayer(t *testing.T) {
 	if player.ID != "3a8f6440-1b20-11e6-a24a-06ab1a16f8e5" {
 		t.Fatalf("Got the wrong player")
 	}
+
+	if serverResponse != 0 {
+		t.Fatalf("Invalid server response: %v\n", serverResponse)
+	}
+	//PrettyPlayer(player)
+
 }

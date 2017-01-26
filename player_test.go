@@ -2,15 +2,12 @@ package vainglory
 
 import "fmt"
 
-func prettyPlayer(p *Player) string {
+func PrettyPlayer(p *Player) {
 
-	m := p.Stats
+	fmt.Println("\nPlayer Data:" + "\nID: " + p.ID + "\nName: " + p.Name + "\nTitleID: " +
+		p.TitleID + "\nShardID: " + p.ShardID + "\nStats: ")
 
-	for k := range m {
-		fmt.Printf("%v : %v\n", k, m[k])
+	for k := range p.Stats {
+		fmt.Printf("%v : %v\n", k, p.Stats[k])
 	}
-
-	return "\nID: " + p.ID + "\nName: " + p.Name + "\nTitleID: " +
-		p.TitleID + "\nShardID: " + p.ShardID
-
 }
