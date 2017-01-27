@@ -54,11 +54,8 @@ func (c *client) GetStatus() (string, int, error) {
 func (c *client) GetMatches() (string, int, error) {
 
 	req := c.g.Request()
-	//req.Path("/shards/na/matches?page[limit]=3&page[offset]=0")
 	req.Path("/shards/na/matches")
-	//	c.g.Use(query.Set("page[limit]", ))
-	//	c.g.Use(query.Set("page[offset]", "0"))
-	//req.Param(name, value)
+
 	req.Method("GET")
 	res, err := req.Send()
 	if err != nil {
@@ -84,9 +81,8 @@ func (c *client) GetMatchByID(matchID string) (*Match, int, error) {
 	if !res.Ok {
 		return nil, res.StatusCode, err
 	}
-	//create an empty match object
+
 	match := new(Match)
-	//fill the match object with the response data
 	if err = jsonapi.UnmarshalPayload(res.RawResponse.Body, match); err != nil {
 		return nil, 0, err
 	}
@@ -108,10 +104,7 @@ func (c *client) GetPlayerByID(playerID string) (*Player, int, error) {
 		return nil, res.StatusCode, err
 	}
 
-	//create an empty player object
 	player := new(Player)
-
-	//fill the player object with the response data
 	if err = jsonapi.UnmarshalPayload(res.RawResponse.Body, player); err != nil {
 		return nil, 0, err
 	}
