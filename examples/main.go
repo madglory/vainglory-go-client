@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 
 	v "github.com/madglory/vainglory-go-client"
@@ -22,6 +23,13 @@ func main() {
 	//Creates the client
 	client := v.NewClient(apikey, q)
 
+	//prints status
+	res, _, _ := client.GetStatus()
+	buf := new(bytes.Buffer)
+	buf.ReadFrom(res)
+	status := buf.String()
+	fmt.Printf("status: %v\n", status)
+
 	//Return an object, serverErrorResponse, and other Error
 	matches, _, _ := client.GetMatches()
 	fmt.Printf("Match created at: %v\n", matches[0].CreatedAt)
@@ -31,5 +39,4 @@ func main() {
 	fmt.Printf("Participant character: %v\n", participantLeft1.Actor)
 	player, _, _ := client.GetPlayerByID(playerID)
 	fmt.Printf("Player name: %v\n", player.Name)
-
 }

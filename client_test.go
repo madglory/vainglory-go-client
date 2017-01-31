@@ -1,9 +1,6 @@
 package vainglory
 
-import (
-	"fmt"
-	"testing"
-)
+import "testing"
 
 var apikey = "aaa.bbb.ccc"
 var offset = "0"
@@ -14,7 +11,7 @@ func TestGetStatus(t *testing.T) {
 	q := new(QueryRequest)
 	client := NewClient(apikey, q)
 
-	status, serverResponse, err := client.GetStatus()
+	_, serverResponse, err := client.GetStatus()
 
 	if err != nil {
 		t.Fatalf("There was an error getting status: %v\n", err)
@@ -23,10 +20,6 @@ func TestGetStatus(t *testing.T) {
 	if serverResponse != 0 {
 		t.Fatalf("Invalid server response: %v\n", serverResponse)
 	}
-	if status == "" {
-		t.Fatalf("No status was retrieved.")
-	}
-	fmt.Printf("status: %v", status)
 }
 
 func TestGetMatches(t *testing.T) {
@@ -47,7 +40,7 @@ func TestGetMatches(t *testing.T) {
 		t.Fatalf("Invalid server response: %v\n", serverResponse)
 	}
 	if matches == nil {
-		t.Fatalf("No matches. ")
+		t.Fatalf("No matches found. ")
 	}
 }
 

@@ -1,6 +1,7 @@
 package vainglory
 
 import (
+	"io"
 	"reflect"
 
 	"github.com/google/jsonapi"
@@ -37,38 +38,37 @@ func NewClient(apikey string, q *QueryRequest) *client {
 	return c
 }
 
-func (c *client) GetStatus() (string, int, error) {
+func (c *client) getRequest(path string) (io.Reader, int, error) {
 
 	req := c.g.Request()
-	req.Path("/status")
+	req.Path(path)
 	req.Method("GET")
 
-	res, err := req.Send()
-	if err != nil {
-		return "", 0, err
-	}
-	if !res.Ok {
-		return "", res.StatusCode, err
-	}
-
-	return res.String(), 0, err
-}
-
-func (c *client) GetMatches() ([]*Match, int, error) {
-	req := c.g.Request()
-	req.Path("/shards/na/matches")
-
-	req.Method("GET")
 	res, err := req.Send()
 	if err != nil {
 		return nil, 0, err
 	}
+
 	if !res.Ok {
 		return nil, res.StatusCode, err
 	}
 
-	data, err := jsonapi.UnmarshalManyPayload(res.RawResponse.Body, reflect.TypeOf(new(Match)))
-	if err != nil {
+	return res.RawResponse.Body, 0, nil
+}
+
+func (c *client) GetStatus() (io.Reader, int, error) {
+
+	res, serverResponse, error := c.getRequest("/status")
+
+	return res, serverResponse, error
+}
+
+func (c *client) GetMatches() ([]*Match, int, error) {
+
+	res, serverResponse, err := c.getRequest("/shards/na/matches")
+
+	data, unmarshalErr := jsonapi.UnmarshalManyPayload(res, reflect.TypeOf(new(Match)))
+	if unmarshalErr != nil {
 		return nil, 0, err
 	}
 	matches := []*Match{}
@@ -79,48 +79,26 @@ func (c *client) GetMatches() ([]*Match, int, error) {
 		}
 		matches = append(matches, match)
 	}
-	return matches, 0, err
+	return matches, serverResponse, err
 }
 
 func (c *client) GetMatchByID(matchID string) (*Match, int, error) {
-	req := c.g.Request()
-	req.Path("/shards/na/matches/" + matchID)
-	req.Method("GET")
 
-	res, err := req.Send()
-	if err != nil {
-		return nil, 0, err
-	}
-
-	if !res.Ok {
-		return nil, res.StatusCode, err
-	}
-
+	res, serverResponse, err := c.getRequest("/shards/na/matches/" + matchID)
 	match := new(Match)
-	if err = jsonapi.UnmarshalPayload(res.RawResponse.Body, match); err != nil {
-		return nil, 0, err
+	if unmarshalErr := jsonapi.UnmarshalPayload(res, match); unmarshalErr != nil {
+		return nil, 0, unmarshalErr
 	}
-	return match, 0, err
+	return match, serverResponse, err
 }
 
 func (c *client) GetPlayerByID(playerID string) (*Player, int, error) {
 
-	req := c.g.Request()
-	req.Path("/shards/na/players/" + playerID)
-	req.Method("GET")
-
-	res, err := req.Send()
-	if err != nil {
-		return nil, 0, err
-	}
-
-	if !res.Ok {
-		return nil, res.StatusCode, err
-	}
+	res, serverResponse, err := c.getRequest("/shards/na/players/" + playerID)
 
 	player := new(Player)
-	if err = jsonapi.UnmarshalPayload(res.RawResponse.Body, player); err != nil {
+	if unmarshalErr := jsonapi.UnmarshalPayload(res, player); unmarshalErr != nil {
 		return nil, 0, err
 	}
-	return player, 0, err
+	return player, serverResponse, err
 }
