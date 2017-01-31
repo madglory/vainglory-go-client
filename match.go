@@ -8,7 +8,6 @@ type Match struct {
 	CreatedAt    time.Time              `json:"createdAt" jsonapi:"attr,createdAt,iso8601" validate:"required"`
 	Duration     int64                  `json:"duration" jsonapi:"attr,duration"`
 	Rosters      []*Roster              `json:"rosters" jsonapi:"relation,rosters" validate:"required"`
-	Rounds       []*Round               `json:"rounds" jsonapi:"relation,rounds"` // Rounds are optional @BJC
 	Stats        map[string]interface{} `json:"stats" jsonapi:"attr,stats" validate:"required"`
 	GameMode     string                 `json:"gameMode" jsonapi:"attr,gameMode"`
 	PatchVersion string                 `json:"patchVersion" jsonapi:"attr,patchVersion"`
