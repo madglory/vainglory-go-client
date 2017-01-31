@@ -23,15 +23,13 @@ func main() {
 	client := v.NewClient(apikey, q)
 
 	//Return an object, serverErrorResponse, and other Error
-	match, _, _ := client.GetMatchByID(matchID)
-	player, _, _ := client.GetPlayerByID(playerID)
-
-	//Returns a string, serverErrorResponse, and other Error
 	matches, _, _ := client.GetMatches()
-
-	//Return a matches object
-	fmt.Printf("3 Matches: \n%v\n", matches)
-	fmt.Printf("Game mode of single match: %v\n", match.GameMode)
-	fmt.Printf("Single player name: %v\n", player.Name)
+	fmt.Printf("Match created at: %v\n", matches[0].CreatedAt)
+	match, _, _ := client.GetMatchByID(matchID)
+	fmt.Printf("Match roster total gold: %v\n", match.Rosters[0].Stats["gold"])
+	participantLeft1 := match.Rosters[0].Participants[0]
+	fmt.Printf("Participant character: %v\n", participantLeft1.Actor)
+	player, _, _ := client.GetPlayerByID(playerID)
+	fmt.Printf("Player name: %v\n", player.Name)
 
 }

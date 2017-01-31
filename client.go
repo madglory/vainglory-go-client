@@ -1,8 +1,9 @@
 package vainglory
 
 import (
-	"github.com/google/jsonapi"
+	"reflect"
 
+	"github.com/google/jsonapi"
 	gentleman "gopkg.in/h2non/gentleman.v1"
 	"gopkg.in/h2non/gentleman.v1/plugins/query"
 )
@@ -23,6 +24,8 @@ func NewClient(apikey string, q *QueryRequest) *client {
 	c.g.SetHeader("Authorization", "Bearer "+apikey)
 	c.g.SetHeader("X-TITLE-ID", "semc-vainglory")
 	c.g.SetHeader("Accept", "application/vnd.api+json")
+	c.g.SetHeader("Content-Encoding", "gzip")
+
 	c.g.Use(query.Set("page[limit]", q.Limit))
 	c.g.Use(query.Set("page[offset]", q.Offset))
 	c.g.Use(query.Set("sort", q.SortField))
@@ -51,21 +54,32 @@ func (c *client) GetStatus() (string, int, error) {
 	return res.String(), 0, err
 }
 
-func (c *client) GetMatches() (string, int, error) {
-
+func (c *client) GetMatches() ([]*Match, int, error) {
 	req := c.g.Request()
 	req.Path("/shards/na/matches")
 
 	req.Method("GET")
 	res, err := req.Send()
 	if err != nil {
-		return "", 0, err
+		return nil, 0, err
 	}
 	if !res.Ok {
-		return "", res.StatusCode, err
+		return nil, res.StatusCode, err
 	}
 
-	return res.String(), 0, err
+	data, err := jsonapi.UnmarshalManyPayload(res.RawResponse.Body, reflect.TypeOf(new(Match)))
+	if err != nil {
+		return nil, 0, err
+	}
+	matches := []*Match{}
+	for _, b := range data {
+		match, ok := b.(*Match)
+		if !ok {
+			return nil, 0, err
+		}
+		matches = append(matches, match)
+	}
+	return matches, 0, err
 }
 
 func (c *client) GetMatchByID(matchID string) (*Match, int, error) {

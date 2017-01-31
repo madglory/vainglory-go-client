@@ -1,6 +1,9 @@
 package vainglory
 
-import "testing"
+import (
+	"fmt"
+	"testing"
+)
 
 var apikey = "aaa.bbb.ccc"
 var offset = "0"
@@ -23,6 +26,7 @@ func TestGetStatus(t *testing.T) {
 	if status == "" {
 		t.Fatalf("No status was retrieved.")
 	}
+	fmt.Printf("status: %v", status)
 }
 
 func TestGetMatches(t *testing.T) {
@@ -30,21 +34,21 @@ func TestGetMatches(t *testing.T) {
 	q := new(QueryRequest)
 	q.Limit = "3"
 	q.Offset = "0"
+	q.SortField = "createdAt"
 
 	client := NewClient(apikey, q)
 
 	matches, serverResponse, err := client.GetMatches()
 
 	if err != nil {
-		t.Fatalf("There was an error getting matches: %v", err)
+		t.Fatalf("The following error was thrown: %v", err)
 	}
 	if serverResponse != 0 {
 		t.Fatalf("Invalid server response: %v\n", serverResponse)
 	}
-	if matches == "" {
-		t.Fatalf("There are no matches with these parameters")
+	if matches == nil {
+		t.Fatalf("No matches. ")
 	}
-	//	fmt.Printf("match: %v", match)
 }
 
 func TestGetMatchByID(t *testing.T) {
@@ -64,7 +68,6 @@ func TestGetMatchByID(t *testing.T) {
 	if serverResponse != 0 {
 		t.Fatalf("Invalid server response: %v\n", serverResponse)
 	}
-	//PrettyMatch(match)
 }
 
 func TestGetPlayerByID(t *testing.T) {
@@ -84,6 +87,4 @@ func TestGetPlayerByID(t *testing.T) {
 	if serverResponse != 0 {
 		t.Fatalf("Invalid server response: %v\n", serverResponse)
 	}
-	//PrettyPlayer(player)
-
 }
