@@ -1,10 +1,12 @@
 package vainglory
 
 import (
+	"fmt"
 	"io"
 	"reflect"
 
 	"github.com/google/jsonapi"
+
 	gentleman "gopkg.in/h2non/gentleman.v1"
 	"gopkg.in/h2non/gentleman.v1/plugins/query"
 )
@@ -52,7 +54,6 @@ func (c *client) getRequest(path string) (io.Reader, int, error) {
 	if !res.Ok {
 		return nil, res.StatusCode, err
 	}
-
 	return res.RawResponse.Body, 0, nil
 }
 
@@ -69,6 +70,7 @@ func (c *client) GetMatches() ([]*Match, int, error) {
 
 	data, unmarshalErr := jsonapi.UnmarshalManyPayload(res, reflect.TypeOf(new(Match)))
 	if unmarshalErr != nil {
+		fmt.Printf("error; %v\n", unmarshalErr)
 		return nil, 0, err
 	}
 	matches := []*Match{}
@@ -84,8 +86,11 @@ func (c *client) GetMatches() ([]*Match, int, error) {
 
 func (c *client) GetMatchByID(matchID string) (*Match, int, error) {
 
+	//res is returned as io.Reader
 	res, serverResponse, err := c.getRequest("/shards/na/matches/" + matchID)
+
 	match := new(Match)
+
 	if unmarshalErr := jsonapi.UnmarshalPayload(res, match); unmarshalErr != nil {
 		return nil, 0, unmarshalErr
 	}

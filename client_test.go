@@ -27,7 +27,6 @@ func TestGetMatches(t *testing.T) {
 	q := new(QueryRequest)
 	q.Limit = "3"
 	q.Offset = "0"
-	q.SortField = "createdAt"
 
 	client := NewClient(apikey, q)
 
@@ -49,12 +48,12 @@ func TestGetMatchByID(t *testing.T) {
 	q := new(QueryRequest)
 	client := NewClient(apikey, q)
 
-	match, serverResponse, err := client.GetMatchByID("f78917d2-d7cf-11e6-ad79-062445d3d668")
+	match, serverResponse, err := client.GetMatchByID("cf014d9c-d7d0-11e6-ad79-062445d3d668")
 	if err != nil {
-		t.Fatalf("There was an error getting your match %v", err)
+		t.Fatalf("There was an error getting your match: %v", err)
 	}
 
-	if match.ID != "f78917d2-d7cf-11e6-ad79-062445d3d668" {
+	if match.ID != "cf014d9c-d7d0-11e6-ad79-062445d3d668" {
 		t.Fatalf("Got the wrong match")
 	}
 
